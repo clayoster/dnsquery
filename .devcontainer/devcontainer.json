@@ -1,0 +1,5 @@
+{
+  "dockerFile": "../Dockerfile",
+  "context": "..",
+  "forwardPorts": [8080,8080]
+}

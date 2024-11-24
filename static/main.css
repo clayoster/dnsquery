@@ -1,0 +1,18 @@
+body {
+  width: 700px;
+}
+form {
+  margin-bottom: 7px;
+}
+.results {
+  color: #000000;
+}
+#dnsquery {
+  width: 700px;
+}
+#domain-name {
+  width: 100px;
+}
+#domain-textbox {
+  width: 550px;
+}

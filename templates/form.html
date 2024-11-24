@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>DNS Query Tool</title>
+    <link rel="stylesheet" href="/static/main.css">
+  </head>
+  <body>
+    <form id="dnsquery" action="/" method="post" accept-charset="UTF-8">
+      <fieldset>
+        <legend><b>DNS Query Tool</b></legend>
+        <input type="hidden" name="submitted" id="submitted" value="1"/>
+        <table>
+          <tr>
+            <td id="domain-name"><label for="domain" >Domain:</label></td>
+            <td><input type="text" name="domain" value="{{ domain or '' }}" id="domain-textbox" autofocus="autofocus" maxlength="255" /></td>
+          </tr>
+          <tr>
+            <td><label for="ttl" >TTL:</label></td>
+            <td><input type="checkbox" name="ttl" value="true" {% if ttl == 'true' %}checked{% endif %} ></td>
+          </tr>
+          <tr>
+            <td><label for="query_time" >Query Time:</label></td>
+            <td><input type="checkbox" name="query_time" value="true" {% if query_time == 'true' %}checked{% endif %} ></td>
+          </tr>
+        </table>
+        <input type="submit" name="Submit" value="Submit" />
+      </fieldset>
+    </form>
+    <details>
+      <summary>About</summary>
+        <p>This is a simple troubleshooting tool for querying DNS environments to view the IP address that a domain
+          name ultimately resolves to. The code behind this was mainly written to troubleshoot where cached
+          records needed to be purged after IP changes.</p>
+        <p>At this point, it's intentionally been designed to not show a high level of detail such as the type of record, etc.</p>
+    </details>
+    <hr>
+    {% if dns_data -%}
+    <span class="results">
+    {% for key, value in dns_data.items() %}
+    {{ key }}
+    <br />
+    <b>{{ value }}</b>
+    <br />
+    <br />
+    {% endfor %}
+    </span>
+    <br />
+    {% elif error -%}
+    <b>{{ error }}</b>
+    {% endif -%}
+  </body>
+</html>
