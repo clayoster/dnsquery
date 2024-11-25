@@ -31,11 +31,12 @@ except IOError:
 
 @app.route('/', methods = ['GET'])
 def show_main():
-    # Return the main login form.
+    """Return the main form"""
     return show_form()
 
 @app.route('/', methods = ['POST'])
 def handle_submit():
+    """ Handle submissions to the web form """
     dns_data = None
     domain= None
     error = None
@@ -70,6 +71,7 @@ def handle_submit():
     return show_form(dns_data=dns_data,domain=domain,error=error,ttl=ttl,query_time=query_time)
 
 def perform_query(service, ip, domain, ttl, query_time):
+    """ Function for completing DNS queries """
     # Set variable defaults
     dns_time = None
     query_data = None
@@ -120,7 +122,7 @@ def perform_query(service, ip, domain, ttl, query_time):
     return query_data
 
 def show_form(dns_data = None, domain = None, error = None, ttl = None, query_time = None):
-    # Return the templated form (with data if provided)
+    """ Return the templated form (with data if provided) """
     return render_template('form.html', dns_data=dns_data, domain=domain, error=error, ttl=ttl, query_time=query_time)
 
 # Run 'python app.py' from the cli to bring the app up in debugging mode on port 8080
