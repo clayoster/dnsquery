@@ -15,9 +15,9 @@ my_resolver = dns.resolver.Resolver()
 DNS_SERVERS_EXAMPLE = """
 dnsquery:
   Example - CloudFlare - 1.1.1.1:
-    ip: '1.1.1.1'
-  Example - Google DNS - 8.8.8.8:
-    ip: '8.8.8.8'
+    ip: 1.1.1.1
+  Example - Google - 8.8.8.8:
+    ip: 8.8.8.8
 """
 
 # Attempt to load servers.yml. If that fails, use DNS_SERVERS_EXAMPLE
