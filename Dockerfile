@@ -14,7 +14,7 @@ RUN set -ex \
     && pip install --no-cache-dir -r requirements.txt \
     && pip cache purge
 
-# Make port 80 available to the world outside this container
+# Expose port 8080
 EXPOSE 8080
 
 # Run the python app with gunicorn and bind to port 8080
