@@ -1,6 +1,6 @@
 # dnsquery
 
-This is a simple troubleshooting tool for querying DNS environments to view the IP address that a domain name ultimately resolves to. The code behind this was mainly written to troubleshoot where cached records needed to be purged after IP changes.
+This is a simple web-based troubleshooting tool for querying DNS environments to view the IP address that a domain name ultimately resolves to. The code behind this was mainly written to troubleshoot where cached records needed to be purged after IP changes.
 
 At this point, it's intentionally been designed to not show a high level of detail such as the type of record, etc.
 
@@ -39,3 +39,8 @@ dnsquery:
   Name Server 2 - Google:
     ip: 8.8.8.8
 ```
+
+## To-Dos:
+- Improve the UI (especially for mobile)
+- Add option to find Active Directory DNS servers based on AD SRV records and query them
+- Add test for DNS timeout handling (test the perform_query function directly)
