@@ -10,6 +10,18 @@ Additional options that can be dispalyed for each query:
 
 By default, queries will be sent to Cloudflare Google and if no name servers are specified. You can find instructions for setting up your own name servers [here](#defining-your-own-name-servers-to-query).
 
+## Defining your own Name Servers to Query
+
+You can specify your own set of servers to query by adding a file named `servers.yml` and mapping it to `/app/servers.yml` within the container. The contents must be in this format:
+
+```yaml
+dnsquery:
+  Name Server 1 - Cloudflare:
+    ip: 1.1.1.1
+  Name Server 2 - Google:
+    ip: 8.8.8.8
+```
+
 ## Deployment Options
 
 ### Docker Compose (Recommended)
@@ -150,18 +162,6 @@ spec:
   #  - hosts:
   #    - dnsquery.example.com
   #    secretName: tls-cert-name
-```
-
-## Defining your own Name Servers to Query
-
-You can specify your own set of servers to query by adding a file named `servers.yml` and mapping it to `/app/servers.yml` within the container. The contents must be in this format:
-
-```yaml
-dnsquery:
-  Name Server 1 - Cloudflare:
-    ip: 1.1.1.1
-  Name Server 2 - Google:
-    ip: 8.8.8.8
 ```
 
 ## To-Dos:
