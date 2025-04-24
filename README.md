@@ -10,10 +10,11 @@ Additional options that can be dispalyed for each query:
 
 By default, queries will be sent to Cloudflare Google and if no name servers are specified. You can find instructions for setting up your own name servers [here](#defining-your-own-name-servers-to-query).
 
-## Deployment with Docker Compose (Recommended)
+## Deployment Options
 
-#### Example docker-compose.yml file
+### Docker Compose (Recommended)
 
+Example docker-compose.yml file
 ```yaml
 services:
   dnsquery:
@@ -26,6 +27,129 @@ services:
       - ./servers.yml:/app/servers.yml:ro
     ports:
       - "8080:8080"
+```
+
+### Kubernetes
+
+Example Kubernetes manifest file defining the following items:
+- Namespace
+- ConfigMap (Containing servers.yml file containing example configuration)
+- Deployment (A single pod with health checks)
+- Service
+- Ingress (Configured with example domain "dnsquery.example.com" with HTTPS optionally)
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dnsquery
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dnsquery
+  namespace: dnsquery
+data:
+  servers.yml: |
+    # Example Configuration
+    #
+    # dnsquery:
+    #   Example - CloudFlare - 1.1.1.1:
+    #     ip: '1.1.1.1'
+    #   Example - Google DNS - 8.8.8.8:
+    #     ip: '8.8.8.8'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnsquery
+  namespace: dnsquery
+  labels:
+    app: dnsquery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dnsquery
+  template:
+    metadata:
+      labels:
+        app: dnsquery
+    spec:
+      containers:
+      - name: dnsquery
+        image: ghcr.io/clayoster/dnsquery:latest
+        ports:
+          - containerPort: 8080
+            name: 8080tcp
+            protocol: TCP
+        livenessProbe:
+          exec:
+            command:
+              - pgrep
+              - gunicorn
+          failureThreshold: 3
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        startupProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        volumeMounts:
+          - mountPath: /app/servers.yml
+            name: dnsquery
+            readOnly: true
+            subPath: servers.yml
+      volumes:
+      - name: dnsquery
+        configMap:
+          name: dnsquery
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dnsquery
+  namespace: dnsquery
+spec:
+  selector:
+    app: dnsquery
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dnsquery
+  namespace: dnsquery
+spec:
+  rules:
+  - host: dnsquery.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dnsquery
+            port:
+              number: 80
+  # Optional TLS block
+  #tls:
+  #  - hosts:
+  #    - dnsquery.example.com
+  #    secretName: tls-cert-name
 ```
 
 ## Defining your own Name Servers to Query
