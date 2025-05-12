@@ -48,7 +48,7 @@ Example Kubernetes manifest file defining the following items:
 - ConfigMap (Containing servers.yml file containing example configuration)
 - Deployment (A single pod with health checks)
 - Service
-- Ingress (Configured with example domain "dnsquery.example.com" with HTTPS optionally)
+- Ingress (Configured for nginx ingress with example domain "dnsquery.example.com" with HTTPS optionally)
 
 ```yaml
 apiVersion: v1
@@ -146,6 +146,7 @@ metadata:
   name: dnsquery
   namespace: dnsquery
 spec:
+  ingressClassName: nginx
   rules:
   - host: dnsquery.example.com
     http:
