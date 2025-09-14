@@ -95,27 +95,17 @@ spec:
           - containerPort: 8080
             name: 8080tcp
             protocol: TCP
-        livenessProbe:
-          exec:
-            command:
-              - pgrep
-              - gunicorn
-          failureThreshold: 3
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
         resources: {}
-        startupProbe:
-          failureThreshold: 3
+        livenessProbe:
           httpGet:
-            path: /
+            path: /health
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 5
           periodSeconds: 10
           successThreshold: 1
-          timeoutSeconds: 1
+          timeoutSeconds: 3
+          failureThreshold: 3
         volumeMounts:
           - mountPath: /app/servers.yml
             name: dnsquery
