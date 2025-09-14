@@ -31,6 +31,7 @@ except IOError:
 
 @app.route('/health')
 def healthcheck():
+    """Return the healthcheck"""
     return "healthy"
 
 @app.route('/', methods = ['GET'])
