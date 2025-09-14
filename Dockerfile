@@ -17,6 +17,7 @@ COPY . /app
 # and create app user
 RUN set -ex \
     && apk upgrade --available --no-cache \
+    && apk add curl --no-cache \
     && rm -rf /var/cache/apk/* \
     && pip install --no-cache-dir -r app-requirements.txt \
     && pip cache purge \
@@ -50,3 +51,7 @@ USER app
 
 # Run the python app with gunicorn (settings are in gunicorn.conf.py)
 CMD ["gunicorn", "app:app"]
+
+# Application halthcheck
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1

@@ -50,3 +50,8 @@ def test_bad_query(app, client):
     assert not re.search('<b>[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}</b>', str(res.data))
     assert b'Bad Query - Check domain name' in res.data
     assert res.status_code == 200
+
+def test_healthcheck(app, client):
+    res = client.get('/health')
+    assert b'healthy' in res.data
+    assert res.status_code == 200

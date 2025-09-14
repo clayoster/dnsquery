@@ -29,6 +29,10 @@ except IOError:
     print('servers.yml file is missing, using default nameserver list')
     dns_servers = yaml.safe_load(DNS_SERVERS_EXAMPLE)
 
+@app.route('/health')
+def healthcheck():
+    return "healthy"
+
 @app.route('/', methods = ['GET'])
 def show_main():
     """Return the main form"""
