@@ -237,3 +237,54 @@ hr {
     transition-duration: 0.01ms !important;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #181a1b;
+    color: #f3f3f3;
+  }
+  fieldset,
+  details,
+  .results {
+    background-color: #232526;
+    border-color: #35373a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.24);
+  }
+  .form-group label,
+  legend,
+  summary,
+  .result-key {
+    color: #d4d7db;
+  }
+  .form-group input[type="text"] {
+    background-color: #222326;
+    border-color: #43484d;
+    color: #f3f3f3;
+  }
+  .form-group input[type="text"]:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.20);
+  }
+  .checkbox-group label {
+    color: #c0c3c8;
+  }
+  .submit-btn {
+    background-color: #227cee;
+    color: #fff;
+  }
+  .submit-btn:hover {
+    background-color: #155fa0;
+  }
+  .error {
+    background-color: #3c2224;
+    color: #f8d7da;
+    border-color: #7c464a;
+  }
+  details p,
+  .result-value {
+    color: #e1e3e7;
+  }
+  hr {
+    background-color: #43484d;
+  }
+}
