@@ -24,9 +24,13 @@ form {
 }
 
 fieldset {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 16px; /* keep your existing padding */
   border: 2px solid #e9ecef;
   border-radius: 8px;
-  padding: 16px;
   background-color: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
