@@ -156,6 +156,5 @@ spec:
 ```
 
 ## To-Dos:
-- Improve the UI (especially for mobile)
 - Add option to find Active Directory DNS servers based on AD SRV records and query them
 - Add test for DNS timeout handling (test the perform_query function directly)
