@@ -51,6 +51,7 @@ Example Kubernetes manifest file defining the following items:
 - Ingress (Configured for nginx ingress with example domain "dnsquery.example.com" with HTTPS optionally)
 
 ```yaml
+---
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -89,32 +90,32 @@ spec:
         app: dnsquery
     spec:
       containers:
-      - name: dnsquery
-        image: ghcr.io/clayoster/dnsquery:latest
-        ports:
-          - containerPort: 8080
-            name: 8080tcp
-            protocol: TCP
-        resources: {}
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 3
-          failureThreshold: 3
-        volumeMounts:
-          - mountPath: /app/servers.yml
-            name: dnsquery
-            readOnly: true
-            subPath: servers.yml
+        - name: dnsquery
+          image: ghcr.io/clayoster/dnsquery:latest
+          ports:
+            - containerPort: 8080
+              name: 8080tcp
+              protocol: TCP
+          resources: {}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - mountPath: /app/servers.yml
+              name: dnsquery
+              readOnly: true
+              subPath: servers.yml
       volumes:
-      - name: dnsquery
-        configMap:
-          name: dnsquery
+        - name: dnsquery
+          configMap:
+            name: dnsquery
 ---
 apiVersion: v1
 kind: Service
@@ -138,16 +139,16 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: dnsquery.example.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: dnsquery
-            port:
-              number: 80
+    - host: dnsquery.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dnsquery
+                port:
+                  number: 80
   # Optional TLS block
   #tls:
   #  - hosts:
