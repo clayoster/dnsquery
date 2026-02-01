@@ -58,18 +58,19 @@ def handle_submit():
 
     # If the domain name passes the validation check, perform queries
     if validate_input:
+        # Prepare lists for compiling DNS data
         keys = []
         values = []
         for service,options in dns_servers['dnsquery'].items():
             ip = options.get('ip', None)
             query_data = perform_query(service, ip, domain, ttl, query_time)
 
+            # Add data from the query to the lists
             keys.append(service)
             values.append(query_data)
 
             # Compile DNS data into a dict
             dns_data = dict(zip(keys, values))
-            #print(dns_data)
     else:
         error = 'Bad Query - Check domain name for correct format and invalid characters'
 
@@ -79,7 +80,7 @@ def perform_query(service, ip, domain, ttl, query_time):
     """ Function for completing DNS queries """
     # Set variable defaults
     dns_time = None
-    query_data = None
+    query_data = {"results": [], "detail": []}
 
     # Set Nameserver IP
     my_resolver.nameservers = [ip]
@@ -99,30 +100,33 @@ def perform_query(service, ip, domain, ttl, query_time):
         dns_end = time.time()
         dns_time = str(round(((dns_end - dns_start) * 1000), 2))
 
+        # Add results to query_data["results"]
         for rdata in my_answers:
-            query_data = rdata.address
-            if ttl == 'true':
-                query_data += " -- TTL: " + str(my_answers.rrset.ttl) + " sec"
-            if query_time == 'true':
-                query_data += " -- Query Time: " + dns_time + " msec"
-            #print(rdata.address)
-            #print(str(my_answers.rrset.ttl)
+            query_data["results"].append(rdata.address)
+
+        # Add query details to query_data["detail"] if requested
+        if ttl == 'true':
+            query_data["detail"].append(f"TTL: {my_answers.rrset.ttl} sec")
+
+        if query_time == 'true':
+            query_data["detail"].append(f"Query Time: {dns_time} msec")
+
     except dns.resolver.NoAnswer:
-        query_data = "No answer"
+        query_data["results"].append("No answer")
     except dns.resolver.NXDOMAIN:
-        query_data = "Domain not found"
+        query_data["results"].append("Domain not found")
     except dns.exception.Timeout:
         # Log the error
         print(">>> Timeout querying server (" + service + " / " + ip + ")")
-        query_data = "Timeout querying server"
+        query_data["results"].append("Timeout querying server")
     except dns.resolver.NoNameservers as e:
         # Log the error
         print(">>> Server did not respond correctly (" + service + " / " + ip + ")")
-        query_data = "Server did not respond correctly: " + str(e)
+        query_data["results"].append("Server did not respond correctly: " + str(e))
     except Exception as e: # pylint: disable=broad-except
         # Log the error
         print(">>> Exception occurred: " + str(e))
-        query_data = "Exception occurred: " + str(e)
+        query_data["results"].append("Exception occurred: " + str(e))
 
     return query_data
 

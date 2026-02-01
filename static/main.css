@@ -141,6 +141,12 @@ details p {
 }
 
 /* DNS Results */
+.dns-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
 .results {
   border: 2px solid #e9ecef;
   background-color: white;
@@ -160,7 +166,7 @@ details p {
   border-bottom: none;
 }
 
-.result-key {
+.result-service {
   display: block;
   font-weight: 500;
   color: #495057;
@@ -168,12 +174,20 @@ details p {
   margin-bottom: 3px;
 }
 
-.result-value {
+.result-data {
   display: block;
   font-size: clamp(10px, 1.6vw, 14px);
   font-weight: 600;
   color: #000;
   word-break: break-word;
+}
+
+.result-data-results {
+  text-align: left;
+}
+
+.result-data-detail {
+  text-align: right;
 }
 
 /* Error Display */
@@ -257,7 +271,7 @@ hr {
   .form-group label,
   legend,
   summary,
-  .result-key {
+  .result-service {
     color: #d4d7db;
   }
   .form-group input[type="text"] {
@@ -285,7 +299,7 @@ hr {
     border-color: #7c464a;
   }
   details p,
-  .result-value {
+  .result-data {
     color: #e1e3e7;
   }
   hr {
