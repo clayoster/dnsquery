@@ -14,13 +14,13 @@
           <input type="hidden" name="submitted" id="submitted" value="1"/>
           
           <div class="form-group">
-            <label for="domain">Domain:</label>
+            <label for="query">Domain or IP:</label>
             <input type="text"
                    inputmode="url"
-                   name="domain"
-                   id="domain"
-                   value="{{ domain or '' }}"
-                   placeholder="Enter domain name"
+                   name="query"
+                   id="query"
+                   value="{{ query or '' }}"
+                   placeholder="Enter domain name or IP"
                    maxlength="255"
                    autocomplete="off"
                    autofocus="autofocus"

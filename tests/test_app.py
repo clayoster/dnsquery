@@ -10,59 +10,67 @@ def test_mainpage(app, client):
 
 # Test that a good query includes IP addresses in the results
 def test_good_query(app, client):
-    res = client.post('/', data={'domain': 'google.com.'})
+    res = client.post('/', data={'query': 'google.com.'})
     assert re.search('<td class="result-data-results">[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}<br/></td>', str(res.data))
     assert b'type="checkbox" name="ttl" value="true" id="ttl" checked' not in res.data
     assert res.status_code == 200
 
+# Test that a good query includes both default services in the results to confirm the dict isn't being overwritten
 def test_good_query_both_services(app, client):
-    res = client.post('/', data={'domain': 'google.com.'})
+    res = client.post('/', data={'query': 'google.com.'})
     assert re.search('<span class="result-service">.*CloudFlare - 1.1.1.1</span>', str(res.data))
     assert re.search('<span class="result-service">.*Google - 8.8.8.8</span>', str(res.data))
     assert re.search('<td class="result-data-results">[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}<br/></td>', str(res.data))
     assert b'type="checkbox" name="ttl" value="true" id="ttl" checked' not in res.data
     assert res.status_code == 200
 
+# Test that a good query includes a PTR record in the results
+def test_good_query_ptr(app, client):
+    res = client.post('/', data={'query': '8.8.8.8'})
+    assert re.search('<td class="result-data-results">dns.google.<br/></td>', str(res.data))
+    assert b'type="checkbox" name="ttl" value="true" id="ttl" checked' not in res.data
+    assert res.status_code == 200
+
 # Test that checking the 'Show TTLs' box remains checked after load, and that TTLs are returned
 def test_good_query_ttl(app, client):
-    res = client.post('/', data={'domain': 'google.com.', 'ttl': 'true'})
+    res = client.post('/', data={'query': 'google.com.', 'ttl': 'true'})
     assert re.search('<td class="result-data-results">[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}<br/></td>', str(res.data))
-    assert re.search('<td class="result-data-detail">TTL:.*<br/></td>', str(res.data))
-    assert not re.search('<td class="result-data-detail">Query Time:.*<br/></td>', str(res.data))
+    assert re.search('<td class="result-data-detail">TTL: [0-9]+ sec<br/></td>', str(res.data))
+    assert not re.search('<td class="result-data-detail">Query Time: [0-9.]+ msec<br/></td>', str(res.data))
     assert b'type="checkbox" name="ttl" value="true" id="ttl" checked' in res.data
     assert res.status_code == 200
 
 # Test that checking the 'Show TTLs' box remains checked after load, and that TTLs are returned
 def test_good_query_time(app, client):
-    res = client.post('/', data={'domain': 'google.com.', 'query_time': 'true'})
+    res = client.post('/', data={'query': 'google.com.', 'query_time': 'true'})
     assert re.search('<td class="result-data-results">[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}<br/></td>', str(res.data))
-    assert re.search('<td class="result-data-detail">Query Time:.*<br/></td>', str(res.data))
-    assert not re.search('<td class="result-data-detail">TTL:.*<br/></td>', str(res.data))
+    assert re.search('<td class="result-data-detail">Query Time: [0-9.]+ msec<br/></td>', str(res.data))
+    assert not re.search('<td class="result-data-detail">TTL: [0-9]+ sec<br/></td>', str(res.data))
     assert b'type="checkbox" name="query_time" value="true" id="query_time" checked' in res.data
     assert res.status_code == 200
 
 # Test that checking the 'Show TTLs' box remains checked after load, and that TTLs are returned
 def test_good_query_ttl_and_time(app, client):
-    res = client.post('/', data={'domain': 'google.com.', 'ttl': 'true', 'query_time': 'true'})
+    res = client.post('/', data={'query': 'google.com.', 'ttl': 'true', 'query_time': 'true'})
     assert re.search('<td class="result-data-results">[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}<br/></td>', str(res.data))
-    assert re.search('<td class="result-data-detail">TTL:.*<br/></td>', str(res.data))
-    assert re.search('<td class="result-data-detail">Query Time:.*<br/></td>', str(res.data))
+    assert re.search('<td class="result-data-detail">TTL: [0-9]+ sec<br/></td>', str(res.data))
+    assert re.search('<td class="result-data-detail">Query Time: [0-9.]+ msec<br/></td>', str(res.data))
     assert b'type="checkbox" name="ttl" value="true" id="ttl" checked' in res.data
     assert b'type="checkbox" name="query_time" value="true" id="query_time" checked' in res.data
     assert res.status_code == 200
 
 # Test that a blank query does not return IP addresses and does contain "Bad Query"
 def test_blank_query(app, client):
-    res = client.post('/', data={'domain': ''})
+    res = client.post('/', data={'query': ''})
     assert not re.search('<td class="result-data-results">[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}<br/></td>', str(res.data))
-    assert b'Bad Query - Check domain name' in res.data
+    assert b'Bad Query - Check for correct format and invalid characters' in res.data
     assert res.status_code == 200
 
 # Test that a query with invalid characters does not return IP addreses and does contain "Bad Query"
 def test_bad_query(app, client):
-    res = client.post('/', data={'domain': 'g##gle.com'})
+    res = client.post('/', data={'query': 'g##gle.com'})
     assert not re.search('<td class="result-data-results">[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}<br/></td>', str(res.data))
-    assert b'Bad Query - Check domain name' in res.data
+    assert b'Bad Query - Check for correct format and invalid characters' in res.data
     assert res.status_code == 200
 
 def test_healthcheck(app, client):

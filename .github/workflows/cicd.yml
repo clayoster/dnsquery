@@ -44,7 +44,7 @@ jobs:
 
       - name: Run djlint
         run: |
-          djlint templates/form.html
+          djlint templates/
 
   lint-jinja:
     runs-on: ubuntu-latest
