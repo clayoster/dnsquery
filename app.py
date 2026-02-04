@@ -9,7 +9,12 @@ import yaml
 
 app = Flask(__name__)
 
-my_resolver = resolver.Resolver()
+# Define a Resolver instance
+dnsquery_resolver = resolver.Resolver()
+
+# Set query timeout to 2 seconds
+dnsquery_resolver.timeout = 2
+dnsquery_resolver.lifetime = 2
 
 # Default set of DNS servers to query. These will be used if the
 # servers.yml file does not exist.
@@ -112,11 +117,7 @@ def perform_query(service, ip, query, query_type, ttl, query_time): # pylint: di
     query_final = None
 
     # Set Nameserver IP
-    my_resolver.nameservers = [ip]
-
-    # Setting query timeout to 2 seconds
-    my_resolver.timeout = 2
-    my_resolver.lifetime = 2
+    dnsquery_resolver.nameservers = [ip]
 
     if query_type == 'dns_name':
         record_type = 'A'
@@ -131,19 +132,19 @@ def perform_query(service, ip, query, query_type, ttl, query_time): # pylint: di
         dns_start = time.time()
 
         # Perform query
-        my_answers = my_resolver.resolve(query_final, record_type)
+        dnsquery_answers = dnsquery_resolver.resolve(query_final, record_type)
 
         # Capture query end time and determine response time
         dns_end = time.time()
         dns_time = str(round(((dns_end - dns_start) * 1000), 2))
 
         # Add results to query_data["results"]
-        for r in my_answers:
+        for r in dnsquery_answers:
             query_data["results"].append(r)
 
         # Add query details to query_data["detail"] if requested
         if ttl == 'true':
-            query_data["detail"].append(f"TTL: {my_answers.rrset.ttl} sec")
+            query_data["detail"].append(f"TTL: {dnsquery_answers.rrset.ttl} sec")
 
         if query_time == 'true':
             query_data["detail"].append(f"Query Time: {dns_time} msec")
