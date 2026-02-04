@@ -4,13 +4,12 @@ import ipaddress
 import re
 import time
 from flask import Flask, request, render_template
-import dns.resolver
-import dns.reversename
+from dns import exception, resolver, reversename
 import yaml
 
 app = Flask(__name__)
 
-my_resolver = dns.resolver.Resolver()
+my_resolver = resolver.Resolver()
 
 # Default set of DNS servers to query. These will be used if the
 # servers.yml file does not exist.
@@ -125,7 +124,7 @@ def perform_query(service, ip, query, query_type, ttl, query_time): # pylint: di
     elif query_type == 'ip_address':
         record_type = 'PTR'
         # Reverse the IP for the PTR query
-        query_final = dns.reversename.from_address(query)
+        query_final = reversename.from_address(query)
 
     try:
         # Capture query start time
@@ -149,15 +148,15 @@ def perform_query(service, ip, query, query_type, ttl, query_time): # pylint: di
         if query_time == 'true':
             query_data["detail"].append(f"Query Time: {dns_time} msec")
 
-    except dns.resolver.NoAnswer:
+    except resolver.NoAnswer:
         query_data["results"].append("No answer")
-    except dns.resolver.NXDOMAIN:
+    except resolver.NXDOMAIN:
         query_data["results"].append("Domain not found")
-    except dns.exception.Timeout:
+    except exception.Timeout:
         # Log the error
         print(">>> Timeout querying server (" + service + " / " + ip + ")")
         query_data["results"].append("Timeout querying server")
-    except dns.resolver.NoNameservers as e:
+    except resolver.NoNameservers as e:
         # Log the error
         print(">>> Server did not respond correctly (" + service + " / " + ip + ")")
         query_data["results"].append("Server did not respond correctly: " + str(e))
