@@ -1,4 +1,4 @@
-djlint==1.40.3
+djlint==1.40.4
 j2lint==1.2.0
 pylint==4.0.6
 pytest==9.1.1
