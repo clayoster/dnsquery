@@ -60,8 +60,8 @@
               {% set max_len = [data.results | length, data.detail | length] | max -%}
               {% for i in range(max_len) -%}
               <tr>
-                <td class="result-data-results">{{ data.results[i] if i < data.results | length else '' }}<br/></td>
-                <td class="result-data-detail">{{ data.detail[i] if i < data.detail | length else '' }}<br/></td>
+                <td class="result-data-results">{{ data.results[i] if i < data.results | length else '' }}</td>
+                <td class="result-data-detail">{{ data.detail[i] if i < data.detail | length else '' }}</td>
               </tr>
               {% endfor -%}
             </tbody>
